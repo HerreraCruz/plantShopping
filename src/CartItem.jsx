@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeItem, updateQuantity } from './CartSlice';
+import { removeItem, updateQuantity, clearCart } from './CartSlice';
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
@@ -44,20 +44,28 @@ const CartItem = ({ onContinueShopping }) => {
   };
 
   const handleCheckoutShopping = (e) => {
-  alert('Functionality to be added for future reference');
-};
+    alert('Thank you for your purchase! Your cart has been cleared.');
+    dispatch(clearCart());
+  };
+
+  const handleClearCart = () => {
+    if (window.confirm('Are you sure you want to clear your cart?')) {
+      dispatch(clearCart());
+    }
+  };
 
   return (
     <div className="cart-container">
       <h2 style={{ color: 'black' }}>Total Cart Amount: ${calculateTotalAmount()}</h2>
       <div>
         {cart.map(item => (
+          <>
           <div className="cart-item" key={item.name}>
             <img className="cart-item-image" src={item.image} alt={item.name} />
-            <div className="cart-item-details">
+            <div className="cart-item-details" style={{textAlign: 'center' }}>
               <div className="cart-item-name">{item.name}</div>
               <div className="cart-item-cost">{item.cost}</div>
-              <div className="cart-item-quantity">
+              <div className="cart-item-quantity" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <button className="cart-item-button cart-item-button-dec" onClick={() => handleDecrement(item)}>-</button>
                 <span className="cart-item-quantity-value">{item.quantity}</span>
                 <button className="cart-item-button cart-item-button-inc" onClick={() => handleIncrement(item)}>+</button>
@@ -66,13 +74,21 @@ const CartItem = ({ onContinueShopping }) => {
               <button className="cart-item-delete" onClick={() => handleRemove(item)}>Delete</button>
             </div>
           </div>
+          <br />
+          </>
         ))}
       </div>
       <div style={{ marginTop: '20px', color: 'black' }} className='total_cart_amount'></div>
-      <div className="continue_shopping_btn">
+      <div className="continue_shopping_btn" style={{ alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={handleCheckoutShopping}>Checkout</button>
+        <br />
+        {cart.length > 0 && (
+          <button className="get-started-button" onClick={handleClearCart} style={{ backgroundColor: '#ff4444', margin: '10px' }}>
+            Clear Cart
+          </button>
+        )}
       </div>
     </div>
   );
